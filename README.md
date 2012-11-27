@@ -1,0 +1,1 @@
+A work-in-progress script for automatically downloading [RubyTapas](http://devblog.avdi.org/rubytapas/) episodes and supporting files.
