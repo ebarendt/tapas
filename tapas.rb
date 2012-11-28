@@ -78,7 +78,7 @@ server = URI::Generic.build(scheme: uri.scheme, host: uri.host, port: uri.port)
 file_url = "#{uri.path}?#{uri.query}"
 
 #feed_server = BasicServer.new(server, username, password)
-#rss_feed = feed_server.get('/').body
+#rss_feed = feed_server.get('/feed').body
 
 #xml_doc = Nokogiri::XML(rss_feed)
 xml_doc = Nokogiri::XML(IO.read('feed.xml'))
@@ -91,7 +91,9 @@ items.each do |item|
   links = description_doc.css('ul li a')
 
   links_to_download = links.each_with_object([]) do |link, memo|
-    memo << link['href'] if link['href'] =~ /rubytapas.dpdcart.com\/subscriber\/download/
+    if link['href'] =~ /rubytapas.dpdcart.com\/subscriber\/download/
+      memo << { filename: link.content, link: link['href'] }
+    end
   end
 
   puts title
