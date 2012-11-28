@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'faraday'
+require 'nokogiri'
 
 class BasicServer
 
@@ -76,9 +77,27 @@ uri = URI(ARGV[2])
 server = URI::Generic.build(scheme: uri.scheme, host: uri.host, port: uri.port)
 file_url = "#{uri.path}?#{uri.query}"
 
-feed_server = BasicServer.new(server, username, password)
-rss_feed = feed_server.get('/feed').body
+#feed_server = BasicServer.new(server, username, password)
+#rss_feed = feed_server.get('/').body
 
-tapas_server = TapasServer.new(server, username, password)
-tapas_server.authenticate
-tapas_server.save_file(file_url)
+#xml_doc = Nokogiri::XML(rss_feed)
+xml_doc = Nokogiri::XML(IO.read('feed.xml'))
+items = xml_doc.xpath('//item')
+items.each do |item|
+  children = item.children
+  title = (children / 'title').first.child.content
+  description = (children / 'description').first.child.content
+  description_doc = Nokogiri::HTML(description)
+  links = description_doc.css('ul li a')
+
+  links_to_download = links.each_with_object([]) do |link, memo|
+    memo << link['href'] if link['href'] =~ /rubytapas.dpdcart.com\/subscriber\/download/
+  end
+
+  puts title
+  puts links_to_download
+end
+
+#tapas_server = TapasServer.new(server, username, password)
+#tapas_server.authenticate
+#tapas_server.save_file(file_url)
