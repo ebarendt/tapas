@@ -72,7 +72,7 @@ def extract_links_to_download(server, feed)
   end
 end
 
-def download_episode(episode)
+def download_episode(episode, tapas_server)
   Dir.mkdir("downloads") unless File.directory?("downloads")
   directory = File.join("downloads", episode[:title])
   return if episode[:links].empty? || File.directory?(directory)
@@ -91,5 +91,5 @@ server = "https://rubytapas.dpdcart.com"
 tapas_server = TapasServer.new(server, username, password)
 feed = tapas_server.fetch_feed
 extract_links_to_download(server, feed).each do |episode|
-  download_episode(episode)
+  download_episode(episode, tapas_server)
 end
