@@ -73,19 +73,20 @@ def extract_links_to_download(server, feed)
 end
 
 def download_episode(episode)
-  return if episode[:links].empty? || File.directory?(episode[:title])
+  Dir.mkdir("downloads") unless File.directory?("downloads")
+  directory = File.join("downloads", episode[:title])
+  return if episode[:links].empty? || File.directory?(directory)
 
   puts "Downloading #{episode[:title]}..."
-  Dir.mkdir(episode[:title])
+  Dir.mkdir(directory)
   episode[:links].each do |link|
-    tapas_server.save_file(episode[:title], link[:filename], link[:link])
+    tapas_server.save_file(directory, link[:filename], link[:link])
   end
 end
 
 username = ARGV[0]
 password = ARGV[1]
 server = "https://rubytapas.dpdcart.com"
-
 
 tapas_server = TapasServer.new(server, username, password)
 feed = tapas_server.fetch_feed
