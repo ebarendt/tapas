@@ -88,6 +88,11 @@ username = ARGV[0]
 password = ARGV[1]
 server = "https://rubytapas.dpdcart.com"
 
+unless username && password
+  puts "username and password are required"
+  exit(1)
+end
+
 tapas_server = TapasServer.new(server, username, password)
 feed = tapas_server.fetch_feed
 extract_links_to_download(server, feed).each do |episode|
