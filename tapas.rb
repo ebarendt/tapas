@@ -2,6 +2,7 @@
 
 require 'faraday'
 require 'nokogiri'
+require 'optparse'
 
 class TapasServer
 
@@ -84,17 +85,26 @@ def download_episode(episode, tapas_server)
   end
 end
 
-username = ARGV[0]
-password = ARGV[1]
-server = "https://rubytapas.dpdcart.com"
+options = { server: "https://rubytapas.dpdcart.com" }
+OptionParser.new do |opts|
+  opts.banner = "Usage: #{File.basename($0)} [options]"
 
-unless username && password
+  opts.on("-u USER", "Your username on the RubyTapas server") do |u|
+    options[:username] = u
+  end
+
+  opts.on("-p PASSWORD", "Your password") do |p|
+    options[:password] = p
+  end
+end.parse!
+
+unless options[:username] && options[:password]
   puts "username and password are required"
   exit(1)
 end
 
-tapas_server = TapasServer.new(server, username, password)
+tapas_server = TapasServer.new(options[:server], options[:username], options[:password])
 feed = tapas_server.fetch_feed
-extract_links_to_download(server, feed).each do |episode|
+extract_links_to_download(options[:server], feed).each do |episode|
   download_episode(episode, tapas_server)
 end
