@@ -4,6 +4,7 @@ $: << File.expand_path(File.dirname(__FILE__) + '/../lib')
 
 require 'nokogiri'
 require 'optparse'
+require 'yaml'
 require 'tapas_server'
 
 def extract_links_to_download(server, feed)
@@ -38,7 +39,8 @@ def download_episode(episode, tapas_server)
   end
 end
 
-options = { server: "https://rubytapas.dpdcart.com" }
+options = { server: 'https://rubytapas.dpdcart.com' }
+options.merge!(YAML.load_file(ENV['HOME'] + '/.tapas.yml'))
 OptionParser.new do |opts|
   opts.banner = "Usage: #{File.basename($0)} [options]"
 
