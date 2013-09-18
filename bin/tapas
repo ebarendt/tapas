@@ -29,7 +29,8 @@ end
 
 def download_episode(episode, tapas_server)
   Dir.mkdir("downloads") unless File.directory?("downloads")
-  directory = File.join("downloads", episode[:title])
+  episode_title_slug = episode[:title].downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '')
+  directory = File.join("downloads", episode_title_slug)
   return if episode[:links].empty? || File.directory?(directory)
 
   puts "Downloading #{episode[:title]}..."
